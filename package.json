@@ -1,0 +1,17 @@
+{
+  "name": "x-browser-interstellar",
+  "version": "1.0.0",
+  "description": "Interstellar themed proxy browser wrapper",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "puppeteer": "^24.4.0",
+    "cors": "^2.8.5"
+  }
+}
