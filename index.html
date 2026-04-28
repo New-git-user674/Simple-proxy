@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X BROWSER — TARS PROTOCOL</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@300;400&display=swap');
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000000;
+      color: #00ffcc;
+      font-family: 'Roboto Mono', monospace;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 20px 40px;
+      border-bottom: 1px solid rgba(0, 255, 204, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5, 5, 10, 0.95);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #00ffcc, #00ccff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status {
+      font-size: 14px;
+      color: #00ff88;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #00ff88;
+      border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .main {
+      flex: 1;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .control-panel {
+      background: rgba(10, 12, 20, 0.97);
+      border: 1px solid rgba(0, 255, 204, 0.35);
+      padding: 22px;
+      border-radius: 6px;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    input {
+      flex: 1;
+      background: #05050a;
+      border: 1px solid #00ffcc;
+      color: #00ffdd;
+      padding: 18px 22px;
+      font-size: 17px;
+      font-family: 'Roboto Mono', monospace;
+      outline: none;
+      border-radius: 4px;
+    }
+
+    input:focus {
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+      border-color: #00ffff;
+    }
+
+    button {
+      background: transparent;
+      color: #00ffcc;
+      border: 2px solid #00ffcc;
+      padding: 18px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-family: 'Orbitron', sans-serif;
+      transition: all 0.4s;
+    }
+
+    button:hover {
+      background: #00ffcc;
+      color: #000;
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.9);
+    }
+
+    .viewer {
+      flex: 1;
+      background: #000;
+      border: 1px solid rgba(0, 255, 204, 0.4);
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 20px;
+      left: 25px;
+      font-size: 13px;
+      color: rgba(0, 255, 204, 0.65);
+      pointer-events: none;
+      z-index: 10;
+      letter-spacing: 1px;
+    }
+
+    .footer {
+      padding: 15px;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(0, 255, 204, 0.35);
+      border-top: 1px solid rgba(0, 255, 204, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">X BROWSER</div>
+    <div class="status">
+      <span class="dot"></span>
+      TARS PROTOCOL • INTERSTELLAR RELAY ACTIVE
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="control-panel">
+      <input type="text" id="url" placeholder="ENTER TARGET COORDINATES — https://" autocomplete="off">
+      <button onclick="go()">ENGAGE WARP</button>
+    </div>
+
+    <div class="viewer">
+      <div class="overlay">LIVE FEED • ENDURANCE-CLASS PROXY • PAYLOAD STABLE</div>
+      <iframe id="frame" src="about:blank"></iframe>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2026 X BROWSER • BUILT TO BEND SPACE-TIME
+  </div>
+
+  <script>
+    async function go() {
+      let url = document.getElementById('url').value.trim();
+      if (!url) return alert("ENTER A TARGET");
+      if (!url.startsWith('http')) url = 'https://' + url;
+
+      const btn = document.querySelector('button');
+      const original = btn.textContent;
+      btn.textContent = 'WARPING...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/proxy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('frame').src = data.proxyUrl;
+        } else {
+          alert("WARP FAILURE: " + (data.error || "Unknown"));
+        }
+      } catch (e) {
+        alert("LOST TRANSMISSION");
+      }
+
+      btn.textContent = original;
+      btn.disabled = false;
+    }
+
+    document.getElementById('url').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') go();
+    });
+  </script>
+</body>
+</html>
